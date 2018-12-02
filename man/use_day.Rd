@@ -2,18 +2,25 @@
 % Please edit documentation in R/use_day.R
 \name{use_day}
 \alias{use_day}
+\alias{convert_clipboard_html_to_roxygen_md}
 \title{Create the files for an Advent of Code day}
 \usage{
 use_day(day, open = interactive())
+
+convert_clipboard_html_to_roxygen_md(input = clipr::read_clip())
 }
 \arguments{
 \item{day}{integer giving the day}
 
 \item{open}{whether to open the created files. Defaults to \code{TRUE} in an
 interactive R session.}
+
+\item{input}{html code copied from the Advent of Code website}
 }
 \value{
-\code{NULL}
+\code{use_day()} returns \code{NULL}. \code{convert_clipboard_html_to_roxygen_md()}
+invisibly returns the Roxygen markdown block. It also copies Roxygen
+markdown block onto the clipboard.
 }
 \description{
 Create the files for an Advent of Code day
@@ -22,7 +29,13 @@ Create the files for an Advent of Code day
 Creates a file for writing the functions to solve the problem: \code{R/dayxx.R}.
 The text of the challenge is downloaded and inserted into the roxygen block.
 One caveat is that you will have to manually add the markdown text for Part
-Two yourself.
+Two yourself. BYou can use \code{convert_clipboard_html_to_roxygen_md()} to make
+this easier. Once you can read the description, view the page source, copy
+the html for that part of the problem. Run this function to create a Roxygen
+version of the HTML.
+
+Also, creates a placeholder file for the problem input: \code{inst/inputxx.txt}.
+Paste your input here.
 
 Also, creates a file for unit tests: \code{tests/testthat/test-dayxx.R}. This is
 good place to test that the examples in the problem description work.

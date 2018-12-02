@@ -3,14 +3,23 @@
 #' @param day integer giving the day
 #' @param open whether to open the created files. Defaults to `TRUE` in an
 #'   interactive R session.
-#' @return `NULL`
+#' @return `use_day()` returns `NULL`. `convert_clipboard_html_to_roxygen_md()`
+#'   invisibly returns the Roxygen markdown block. It also copies Roxygen
+#'   markdown block onto the clipboard.
+#' @rdname use_day
 #'
 #' @details
 #'
 #' Creates a file for writing the functions to solve the problem: `R/dayxx.R`.
 #' The text of the challenge is downloaded and inserted into the roxygen block.
 #' One caveat is that you will have to manually add the markdown text for Part
-#' Two yourself.
+#' Two yourself. BYou can use `convert_clipboard_html_to_roxygen_md()` to make
+#' this easier. Once you can read the description, view the page source, copy
+#' the html for that part of the problem. Run this function to create a Roxygen
+#' version of the HTML.
+#'
+#' Also, creates a placeholder file for the problem input: `inst/inputxx.txt`.
+#' Paste your input here.
 #'
 #' Also, creates a file for unit tests: `tests/testthat/test-dayxx.R`. This is
 #' good place to test that the examples in the problem description work.
@@ -87,6 +96,20 @@ use_day <- function(day, open = interactive()) {
   todo("Run your solution on the input here. Once it works, update R/data-solutions.R")
 
   invisible(NULL)
+}
+
+#' @rdname use_day
+#' @export
+#' @param input html code copied from the Advent of Code website
+convert_clipboard_html_to_roxygen_md <- function(input = clipr::read_clip()) {
+  temp <- tempfile(fileext = ".html")
+  writeLines(input, temp)
+  z <- knitr::pandoc(temp, "markdown", encoding = "UTF-8")
+  lines <- readr::read_lines(z)
+  lines <- paste0("#' ", lines, collapse = "\n")
+  clipr::write_clip(lines)
+  done("Roxygen markdown block is on the clipboard")
+  invisible(lines)
 }
 
 remove_day <- function(day) {

@@ -2,16 +2,16 @@
 % Please edit documentation in R/day01.R
 \name{day01}
 \alias{day01}
-\alias{f1}
+\alias{sum_frequency}
 \alias{f2}
 \title{Day 01: Chronal Calibration}
 \usage{
-f1(x)
+sum_frequency(x)
 
 f2(x)
 }
 \arguments{
-\item{x}{some data}
+\item{x}{integer vector of frequencies to sum together}
 }
 \value{
 some values
@@ -77,9 +77,39 @@ after all of the changes in frequency have been applied?
 
 \strong{Part Two}
 
-\emph{(Use have to manually add this yourself.)}
+You notice that the device repeats the same frequency change list over
+and over. To calibrate the device, you need to find the first frequency
+it reaches \emph{twice}.
+
+For example, using the same list of changes above, the device would loop
+as follows:
+\itemize{
+\item Current frequency \code{ 0}, change of \code{+1}; resulting frequency \code{ 1}.
+\item Current frequency \code{ 1}, change of \code{-2}; resulting frequency \code{-1}.
+\item Current frequency \code{-1}, change of \code{+3}; resulting frequency \code{ 2}.
+\item Current frequency \code{ 2}, change of \code{+1}; resulting frequency \code{ 3}.
+\item (At this point, the device continues from the start of the list.)
+\item Current frequency \code{ 3}, change of \code{+1}; resulting frequency \code{ 4}.
+\item Current frequency \code{ 4}, change of \code{-2}; resulting frequency \code{ 2},
+which has already been seen.
+}
+
+In this example, the first frequency reached twice is \code{2}. Note that
+your device might need to repeat its list of frequency changes many
+times before a duplicate frequency is found, and that duplicates might
+be found while in the middle of processing the list.
+
+Here are other examples:
+\itemize{
+\item \code{+1, -1} first reaches \code{0} twice.
+\item \code{+3, +3, +4, -2, -4} first reaches \code{10} twice.
+\item \code{-6, +3, +8, +5, -6} first reaches \code{5} twice.
+\item \code{+7, +7, -2, -7, -4} first reaches \code{14} twice.
+}
+
+\emph{What is the first frequency your device reaches twice?}
 }
 \examples{
-f1()
+sum_frequency(c(+1, -2, +3, +1))
 f2()
 }
