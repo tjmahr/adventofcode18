@@ -14,3 +14,11 @@ RoxygenNote: 6.1.1
 Roxygen: list(markdown = TRUE)
 URL: https://github.com/tjmahr/adventofcode18
 BugReports: https://github.com/tjmahr/adventofcode18/issues
+Imports: 
+    glue,
+    clisymbols,
+    knitr,
+    crayon,
+    usethis,
+    xml2,
+    stringr
