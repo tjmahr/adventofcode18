@@ -59,6 +59,23 @@ use_day <- function(day, open = interactive()) {
     data = data,
     open = open
   )
+  todo("Write your solution code here")
+  todo(
+    "Once you unlock Part Two, update the Roxygen block with the description")
+
+  usethis::use_template(
+    "input.txt",
+    save_as = files$input,
+    package = "adventofcode18",
+    data = list(x = "\n"),
+    open = open
+  )
+  todo("Copy your problem input into this file")
+
+  usethis::use_test(
+    name = test_name
+  )
+  todo("Write unit tests using the examples from the problem description")
 
   usethis::use_template(
     "solution.R",
@@ -67,10 +84,7 @@ use_day <- function(day, open = interactive()) {
     data = data,
     open = open
   )
-
-  usethis::use_test(
-    name = test_name
-  )
+  todo("Run your solution on the input here. Once it works, update R/data-solutions.R")
 
   invisible(NULL)
 }
@@ -84,6 +98,34 @@ get_day_files <- function(day) {
   list(
     main = sprintf("R/day%s.R", dd_number),
     solution = sprintf("inst/run-day%s.R", dd_number),
-    test = sprintf("tests/testthat/test-day%s.R", dd_number)
+    test = sprintf("tests/testthat/test-day%s.R", dd_number),
+    input = sprintf("inst/input%s.txt", dd_number)
   )
 }
+
+
+# These are all copied from usethis in order to match that package's style
+
+todo <- function(..., .envir = parent.frame()) {
+  out <- glue::glue(..., .envir = .envir)
+  cat_line(bulletize(out, bullet = todo_bullet()))
+}
+
+todo_bullet <- function () crayon::red(clisymbols::symbol$bullet)
+
+done <- function (..., .envir = parent.frame()) {
+  out <- glue::glue(..., .envir = .envir)
+  cat_line(bulletize(out, bullet = done_bullet()))
+}
+
+done_bullet <- function () crayon::green(clisymbols::symbol$tick)
+
+bulletize <- function(line, bullet = "*") {
+  paste0(bullet, " ", line)
+}
+
+cat_line <- function(..., quiet = getOption("usethis.quiet", default = FALSE)) {
+  if (quiet) return(invisible())
+  cat(..., "\n", sep = "")
+}
+
