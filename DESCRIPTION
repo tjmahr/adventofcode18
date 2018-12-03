@@ -24,4 +24,6 @@ Imports:
     stringr,
     clipr,
     magrittr,
-    purrr
+    purrr,
+    stats,
+    tibble

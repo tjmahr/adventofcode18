@@ -9,6 +9,5 @@ test_that("box IDs can be checksummed", {
 test_that("nearest neighboring box IDs can be found", {
   x <- c("abcde", "fghij", "klmno", "pqrst",
          "fguij", "axcye", "wvxyz")
-
   expect_equal(find_one_character_neighbors(x), "fgij")
 })
