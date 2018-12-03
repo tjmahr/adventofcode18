@@ -91,22 +91,40 @@
 #'
 #' *What is the first frequency your device reaches twice?*
 #'
-#' @param x integer vector of frequencies to sum together
-#' @return some values
+#' @param x integer vector of frequencies to sum together or check for duplicate
+#'   sums
+#' @return the sum of the frequencies or the first repeated sum
 #' @export
 #' @examples
 #' sum_frequency(c(+1, -2, +3, +1))
-#' f2()
+#' analyze_frequency_stream(c(+1, -1))
 sum_frequency <- function(x) {
   sum(x)
 }
 
 #' @rdname day01
 #' @export
-f2 <- function(x) {
-
+analyze_frequency_stream <- function(x) {
+  done <- FALSE
+  last_sum <- 0L
+  sums <- integer()
+  while (! done) {
+    # Extend the ongoing stream by 100 repetitions then compute cumulative sums
+    #
+    # I originally tried to use an object and process values one at a time. This
+    # grew the history of sums one at a time. This made the code too slow to
+    # solve the problem. (R is slow when it has to expand a vector on each
+    # iteration of a loop.) This solution pre-repeats the sequence so that the
+    # vector of accumulated sums doesn't need to expand as frequently.
+    current_sums <- cumsum(c(last_sum, rep.int(x, 1000)))
+    # I tried 100 instead of 1000 but it didn't work. I'm afraid this isn't a
+    # perfect solution.
+    sums <- c(sums, current_sums)
+    last_sum <- tail(sums, 1)
+    dupes <- which((duplicated(sums)))
+    done <- length(dupes) != 0
+  }
+  sums[dupes[1]]
 }
 
-f_helper <- function(x) {
 
-}

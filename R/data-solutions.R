@@ -2,4 +2,4 @@
 #' @export
 aoc18_solutions <- list(
   day01a = 486,
-  day01b = NA)
+  day01b = 69285)

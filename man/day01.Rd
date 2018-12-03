@@ -3,18 +3,19 @@
 \name{day01}
 \alias{day01}
 \alias{sum_frequency}
-\alias{f2}
+\alias{analyze_frequency_stream}
 \title{Day 01: Chronal Calibration}
 \usage{
 sum_frequency(x)
 
-f2(x)
+analyze_frequency_stream(x)
 }
 \arguments{
-\item{x}{integer vector of frequencies to sum together}
+\item{x}{integer vector of frequencies to sum together or check for duplicate
+sums}
 }
 \value{
-some values
+the sum of the frequencies or the first repeated sum
 }
 \description{
 \href{https://adventofcode.com/2018/day/1}{Chronal Calibration}
@@ -111,5 +112,5 @@ Here are other examples:
 }
 \examples{
 sum_frequency(c(+1, -2, +3, +1))
-f2()
+analyze_frequency_stream(c(+1, -1))
 }
