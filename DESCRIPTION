@@ -22,4 +22,6 @@ Imports:
     usethis,
     xml2,
     stringr,
-    clipr
+    clipr,
+    magrittr,
+    purrr

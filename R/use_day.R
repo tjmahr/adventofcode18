@@ -41,7 +41,7 @@ use_day <- function(day, open = interactive()) {
     part_1 = NA
   )
 
-  files <- get_day_files(1)
+  files <- get_day_files(day)
   test_name <- sprintf("day%s", data$dd_number)
 
   page <- xml2::read_html(url)
