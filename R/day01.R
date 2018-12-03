@@ -1,3 +1,5 @@
+# techniques: objects
+
 #' Day 01: Chronal Calibration
 #'
 #' [Chronal Calibration](https://adventofcode.com/2018/day/1)
@@ -98,6 +100,7 @@
 #' @examples
 #' sum_frequency(c(+1, -2, +3, +1))
 #' analyze_frequency_stream(c(+1, -1))
+#' analyze_frequency_stream( c(+7, +7, -2, -7, -4))
 sum_frequency <- function(x) {
   sum(x)
 }
@@ -105,26 +108,69 @@ sum_frequency <- function(x) {
 #' @rdname day01
 #' @export
 analyze_frequency_stream <- function(x) {
-  done <- FALSE
-  last_sum <- 0L
-  sums <- integer()
-  while (! done) {
-    # Extend the ongoing stream by 100 repetitions then compute cumulative sums
-    #
-    # I originally tried to use an object and process values one at a time. This
-    # grew the history of sums one at a time. This made the code too slow to
-    # solve the problem. (R is slow when it has to expand a vector on each
-    # iteration of a loop.) This solution pre-repeats the sequence so that the
-    # vector of accumulated sums doesn't need to expand as frequently.
-    current_sums <- cumsum(c(last_sum, rep.int(x, 1000)))
-    # I tried 100 instead of 1000 but it didn't work. I'm afraid this isn't a
-    # perfect solution.
-    sums <- c(sums, current_sums)
-    last_sum <- tail(sums, 1)
-    dupes <- which((duplicated(sums)))
-    done <- length(dupes) != 0
+  f <- frequency_stream(x)
+  while (!f$has_duplicated_value()) {
+    f$follow_stream()
   }
-  sums[dupes[1]]
+  f$get_duplicated_value()
+}
+
+frequency_stream <- function(x) {
+  # We only need to compute the cumulative sums once. Consider the stream:
+  #
+  #   c(+7, +7, -2, -7, -4)
+  #
+  # Starting from 0, its cumulative sums are
+  #
+  #   c(0, 7, 14, 12, 5, 1)
+  #
+  # No duplicates found yet, so we have to keep adding the values. We can add
+  # the last value of this history of values to the cumulative sums to get the
+  # next batch of sums.
+  #
+  #   1 + c(7, 14, 12, 5, 1)
+  #   c(8, 15, 13, 6, 2)
+  #
+  # (I had to drop the 0 from the cumulative sums to prevent the final 1 from
+  # being counted twice. In the implementation below, I drop the last value of
+  # the sums but keep 0 to acheive the same effect.)
+  #
+  # No duplicates yet. Try adding the final value to the cumulative sums again.
+  #
+  #   2 + c(7, 14, 12, 5, 1)
+  #   c(9, 16, 14, 7, 3)
+  #
+  # Oh, and there's 14 again!
+
+  sequence <- x
+  sums <- c(0L, cumsum(sequence))
+  current_value <- 0L
+  history <- integer(0)
+  duplicated_value <- integer(0)
+
+  # Do one pass through the stream of values, checking for a duplicated value
+  follow_stream <- function() {
+    curr_sums <- sums + current_value
+    current_value <<- tail(curr_sums, 1)
+    # remove last element because it will be the first item in the next batch
+    curr_sums <- head(curr_sums, -1)
+    history <<- c(history, curr_sums)
+    duplicated_value <<- history[anyDuplicated(history)]
+  }
+
+  get_duplicated_value <- function() {
+    duplicated_value
+  }
+
+  has_duplicated_value <- function() {
+    length(duplicated_value) != 0
+  }
+
+  list(
+    follow_stream = follow_stream,
+    get_duplicated_value = get_duplicated_value,
+    has_duplicated_value = has_duplicated_value
+  )
 }
 
 
