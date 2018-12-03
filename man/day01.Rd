@@ -113,4 +113,5 @@ Here are other examples:
 \examples{
 sum_frequency(c(+1, -2, +3, +1))
 analyze_frequency_stream(c(+1, -1))
+analyze_frequency_stream( c(+7, +7, -2, -7, -4))
 }

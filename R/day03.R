@@ -1,3 +1,5 @@
+# techniques: split-apply-combine
+
 #' Day 03: No Matter How You Slice It
 #'
 #' [No Matter How You Slice It](https://adventofcode.com/2018/day/3)
@@ -74,14 +76,28 @@
 #'
 #' **Part Two**
 #'
-#' *(Use have to manually add this yourself.)*
+#' Amidst the chaos, you notice that exactly one claim doesn't overlap by
+#' even a single square inch of fabric with any other claim. If you can
+#' somehow draw attention to it, maybe the Elves will be able to make
+#' Santa's suit after all!
 #'
-#' @param x some data
-#' @return some values
+#' For example, in the claims above, only claim `3` is intact after all
+#' claims are made.
+#'
+#' *What is the ID of the only claim that doesn't overlap?*
+#'
+#' @param x a character vector of fabric claims
+#' @return For part 1, the total number of squares that are claimed by more than
+#'   one fabric claim. For part 2, the ID of the claim that does not overlap any
+#'   others.
 #' @export
 #' @examples
-#' f1()
-#' f2()
+#' x <- c(
+#'   "#1 @ 1,3: 4x4",
+#'   "#2 @ 3,1: 4x4",
+#'   "#3 @ 5,5: 2x2")
+#' count_overlapping_fabric_claims(x)
+#' find_unique_fabric_claim(x)
 count_overlapping_fabric_claims <- function(x) {
   claims <- x %>%
     parse_fabric_claims() %>%
@@ -102,7 +118,7 @@ create_fabric_claim_matrix <- function(df) {
     purrr::map(as.list)
 
   for (claim in claim_list) {
-    m <- count_claim(m, claim)
+    m <- count_fabric_claim(m, claim)
   }
 
   m
@@ -117,14 +133,16 @@ parse_fabric_claims <- function(x) {
     tibble::as_tibble() %>%
     setNames(
       c("line", "id", "from_left", "from_top", "width", "height")) %>%
-    utils::type.convert()
+    type.convert()
   df$line <- as.character(df$line)
-  df$id <- as.character(df$id)
+  df$id <- df$id %>%
+    stringr::str_remove("#") %>%
+    as.numeric()
   df
 }
 
 # Add values from a fabric claim to a matrix
-count_claim <- function(m, claim) {
+count_fabric_claim <- function(m, claim) {
   # adding 1 to `from_` values here because
   # - 1 row from top means row 2
   # - 0 rows from top means row 1
@@ -134,12 +152,45 @@ count_claim <- function(m, claim) {
   m
 }
 
-#' @rdname day03
-#' @export
-f2 <- function(x) {
-
-}
-
 seq_along_rows <- function(data) {
   seq_len(nrow(data))
+}
+
+
+#' @rdname day03
+#' @export
+find_unique_fabric_claim <- function(x) {
+  df_claims <- parse_fabric_claims(x)
+
+  # Take one pass over the claims to find the overlapping claims
+  claim_matrix <- create_fabric_claim_matrix(df_claims)
+
+  # Take another pass to find whether any squares in a claim overlap with
+  # another claim
+  unique_claims <- check_fabric_claims(df_claims, claim_matrix)
+
+  as.numeric(unique_claims$id)
+}
+
+# (dataframe of parsed fabric claims, matrix of claim counts)
+#   => rows of dataframe for claims that don't overlap any others
+check_fabric_claims <- function(df, m) {
+  claim_list <- df %>%
+    split(seq_along_rows(df)) %>%
+    purrr::map(as.list)
+
+  # Update this vector with IDs of claims whose cells in the main matrix
+  # are all 1's
+  passes <- character(0)
+
+  for (claim in claim_list) {
+    rows <- seq(from = 1 + claim$from_top,  length.out = claim$height)
+    cols <- seq(from = 1 + claim$from_left, length.out = claim$width)
+
+    if (all(m[rows, cols] == 1)) {
+      passes <- c(passes, claim$id)
+    }
+  }
+
+  df[df$id %in% passes, ]
 }

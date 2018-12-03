@@ -3,18 +3,20 @@
 \name{day03}
 \alias{day03}
 \alias{count_overlapping_fabric_claims}
-\alias{f2}
+\alias{find_unique_fabric_claim}
 \title{Day 03: No Matter How You Slice It}
 \usage{
 count_overlapping_fabric_claims(x)
 
-f2(x)
+find_unique_fabric_claim(x)
 }
 \arguments{
-\item{x}{some data}
+\item{x}{a character vector of fabric claims}
 }
 \value{
-some values
+For part 1, the total number of squares that are claimed by more than
+one fabric claim. For part 2, the ID of the claim that does not overlap any
+others.
 }
 \description{
 \href{https://adventofcode.com/2018/day/3}{No Matter How You Slice It}
@@ -86,9 +88,21 @@ claims?}
 
 \strong{Part Two}
 
-\emph{(Use have to manually add this yourself.)}
+Amidst the chaos, you notice that exactly one claim doesn't overlap by
+even a single square inch of fabric with any other claim. If you can
+somehow draw attention to it, maybe the Elves will be able to make
+Santa's suit after all!
+
+For example, in the claims above, only claim \code{3} is intact after all
+claims are made.
+
+\emph{What is the ID of the only claim that doesn't overlap?}
 }
 \examples{
-f1()
-f2()
+x <- c(
+  "#1 @ 1,3: 4x4",
+  "#2 @ 3,1: 4x4",
+  "#3 @ 5,5: 2x2")
+count_overlapping_fabric_claims(x)
+find_unique_fabric_claim(x)
 }

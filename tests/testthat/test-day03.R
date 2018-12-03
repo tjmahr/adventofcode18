@@ -20,3 +20,11 @@ test_that("creating a matrix of fabric claims", {
 
   expect_equal(count_overlapping_fabric_claims(claim_input), 4)
 })
+
+test_that("finding id of the unique fabric claim", {
+  claim_input <- c(
+    "#1 @ 1,3: 4x4",
+    "#2 @ 3,1: 4x4",
+    "#3 @ 5,5: 2x2")
+  expect_equal(find_unique_fabric_claim(claim_input), 3)
+})
