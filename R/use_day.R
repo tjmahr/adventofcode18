@@ -31,8 +31,8 @@
 #' can load in your previous answer, rerun your solution, and check whether your
 #' code no longer obtains the same solution.
 #' @export
-use_day <- function(day, open = interactive()) {
-  url <- sprintf("https://adventofcode.com/2018/day/%s", day)
+use_day <- function(day, year = 2018, open = interactive()) {
+  url <- sprintf("https://adventofcode.com/%s/day/%s", year, day)
 
   data <- list(
     dd_number = sprintf("%02.f", day),
