@@ -15,7 +15,8 @@ analyze_frequency_stream(x)
 sums}
 }
 \value{
-the sum of the frequencies or the first repeated sum
+For Part One, \code{sum_frequency(x)} returns the sum of the frequencies.
+For Part Two, \code{analyze_frequency_stream(x)} returns the first repeated sum.
 }
 \description{
 \href{https://adventofcode.com/2018/day/1}{Chronal Calibration}
@@ -113,5 +114,5 @@ Here are other examples:
 \examples{
 sum_frequency(c(+1, -2, +3, +1))
 analyze_frequency_stream(c(+1, -1))
-analyze_frequency_stream( c(+7, +7, -2, -7, -4))
+analyze_frequency_stream(c(+7, +7, -2, -7, -4))
 }

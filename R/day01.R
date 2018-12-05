@@ -95,12 +95,13 @@
 #'
 #' @param x integer vector of frequencies to sum together or check for duplicate
 #'   sums
-#' @return the sum of the frequencies or the first repeated sum
+#' @return For Part One, `sum_frequency(x)` returns the sum of the frequencies.
+#'   For Part Two, `analyze_frequency_stream(x)` returns the first repeated sum.
 #' @export
 #' @examples
 #' sum_frequency(c(+1, -2, +3, +1))
 #' analyze_frequency_stream(c(+1, -1))
-#' analyze_frequency_stream( c(+7, +7, -2, -7, -4))
+#' analyze_frequency_stream(c(+7, +7, -2, -7, -4))
 sum_frequency <- function(x) {
   sum(x)
 }

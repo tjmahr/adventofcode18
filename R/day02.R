@@ -85,9 +85,10 @@
 #' either ID, producing `fgij`.)
 #'
 #' @param x a character vector of box IDs to checksum
-#' @return For part one, the number of IDs with exactly 2 characters times
-#'   number with exactly 3 characters. For part two, the characters shared by
-#'   the two items that share all but one character.
+#' @return For Part One, `checksum_box_id(x)` returns the number of IDs with
+#'   exactly 2 characters times number with exactly 3 characters. For Part Two,
+#'   `find_one_character_neighbors(x)` the characters shared by the two items
+#'   that share all but one character.
 #' @export
 #' @examples
 #' x <- c("abcdef", "bababc", "abbcde", "abcccd",

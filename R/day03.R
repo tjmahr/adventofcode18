@@ -87,9 +87,10 @@
 #' *What is the ID of the only claim that doesn't overlap?*
 #'
 #' @param x a character vector of fabric claims
-#' @return For part 1, the total number of squares that are claimed by more than
-#'   one fabric claim. For part 2, the ID of the claim that does not overlap any
-#'   others.
+#' @return For Part One, `count_overlapping_fabric_claims(x)` returns the total
+#'   number of squares that are claimed by more than one fabric claim. For Part
+#'   Two, `find_unique_fabric_claim(x)` returns the ID of the claim that does
+#'   not overlap any others.
 #' @export
 #' @examples
 #' x <- c(

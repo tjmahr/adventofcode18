@@ -5,7 +5,7 @@
 \alias{convert_clipboard_html_to_roxygen_md}
 \title{Create the files for an Advent of Code day}
 \usage{
-use_day(day, open = interactive())
+use_day(day, year = 2018, open = interactive())
 
 convert_clipboard_html_to_roxygen_md(input = clipr::read_clip())
 }

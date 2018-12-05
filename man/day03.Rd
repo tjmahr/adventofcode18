@@ -14,9 +14,10 @@ find_unique_fabric_claim(x)
 \item{x}{a character vector of fabric claims}
 }
 \value{
-For part 1, the total number of squares that are claimed by more than
-one fabric claim. For part 2, the ID of the claim that does not overlap any
-others.
+For Part One, \code{count_overlapping_fabric_claims(x)} returns the total
+number of squares that are claimed by more than one fabric claim. For Part
+Two, \code{find_unique_fabric_claim(x)} returns the ID of the claim that does
+not overlap any others.
 }
 \description{
 \href{https://adventofcode.com/2018/day/3}{No Matter How You Slice It}

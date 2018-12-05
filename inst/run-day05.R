@@ -1,8 +1,10 @@
 library(adventofcode18)
 x <- readLines("./inst/input05.txt")
 
-p1 <- f1(x)
-p1 <- f2(x)
+p1 <- run_polymer_reaction(x)
 
-stopifnot(p1 == aoc18_solutions$day05a)
-stopifnot(p2 == aoc18_solutions$day05b)
+# that's a slow one!
+p2 <- simulate_polymer_reactions(x)
+
+stopifnot(nchar(p1) == aoc18_solutions$day05a)
+stopifnot(min(unlist(p2)))
