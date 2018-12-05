@@ -26,4 +26,7 @@ Imports:
     magrittr,
     purrr,
     stats,
-    tibble
+    tibble,
+    rlang (>= 0.1.2)
+Suggests: 
+    roxygen2
