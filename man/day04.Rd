@@ -2,19 +2,22 @@
 % Please edit documentation in R/day04.R
 \name{day04}
 \alias{day04}
-\alias{f1}
-\alias{f2}
+\alias{find_sleepiest_minute_of_sleepiest_guard}
+\alias{find_guard_with_sleepiest_minute}
 \title{Day 04: Repose Record}
 \usage{
-f1(x)
+find_sleepiest_minute_of_sleepiest_guard(x)
 
-f2(x)
+find_guard_with_sleepiest_minute(x)
 }
 \arguments{
-\item{x}{some data}
+\item{x}{a character vector of guard records}
 }
 \value{
-some values
+For Part One, \code{find_sleepiest_minute_of_sleepiest_guard(x)} returns a
+dataframe row with the sleepiest minute of the shift by the guard who
+sleeps the most. For Part Two, \code{find_guard_with_sleepiest_minute(x)}
+returns a dataframe with the sleepiest minute overall of any guard.
 }
 \description{
 \href{https://adventofcode.com/2018/day/4}{Repose Record}
@@ -109,9 +112,35 @@ chose?} (In the above example, the answer would be \code{10 * 24 = 240}.)
 
 \strong{Part Two}
 
-\emph{(Use have to manually add this yourself.)}
+\emph{Strategy 2:} Of all guards, which guard is most frequently asleep on
+the same minute?
+
+In the example above, Guard #\emph{99} spent minute \emph{45} asleep more than
+any other guard or minute - three times in total. (In all other cases,
+any guard spent any minute asleep at most twice.)
+
+\emph{What is the ID of the guard you chose multiplied by the minute you
+chose?} (In the above example, the answer would be \code{99 * 45 = 4455}.)
 }
 \examples{
-f1()
+x <- "[1518-11-01 00:00] Guard #10 begins shift
+[1518-11-01 00:05] falls asleep
+[1518-11-01 00:25] wakes up
+[1518-11-01 00:30] falls asleep
+[1518-11-01 00:55] wakes up
+[1518-11-01 23:58] Guard #99 begins shift
+[1518-11-02 00:40] falls asleep
+[1518-11-02 00:50] wakes up
+[1518-11-03 00:05] Guard #10 begins shift
+[1518-11-03 00:24] falls asleep
+[1518-11-03 00:29] wakes up
+[1518-11-04 00:02] Guard #99 begins shift
+[1518-11-04 00:36] falls asleep
+[1518-11-04 00:46] wakes up
+[1518-11-05 00:03] Guard #99 begins shift
+[1518-11-05 00:45] falls asleep
+[1518-11-05 00:55] wakes up"
+x <- read_text_lines(x)
+find_sleepiest_minute_of_sleepiest_guard(x)
 f2()
 }

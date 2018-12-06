@@ -97,56 +97,82 @@
 #'
 #' **Part Two**
 #'
-#' *(Use have to manually add this yourself.)*
+#' *Strategy 2:* Of all guards, which guard is most frequently asleep on
+#' the same minute?
 #'
-#' @param x some data
-#' @return some values
+#' In the example above, Guard \#*99* spent minute *45* asleep more than
+#' any other guard or minute - three times in total. (In all other cases,
+#' any guard spent any minute asleep at most twice.)
+#'
+#' *What is the ID of the guard you chose multiplied by the minute you
+#' chose?* (In the above example, the answer would be `99 * 45 = 4455`.)
+#'
+#' @param x a character vector of guard records
+#' @return For Part One, `find_sleepiest_minute_of_sleepiest_guard(x)` returns a
+#'   dataframe row with the sleepiest minute of the shift by the guard who
+#'   sleeps the most. For Part Two, `find_guard_with_sleepiest_minute(x)`
+#'   returns a dataframe with the sleepiest minute overall of any guard.
 #' @export
 #' @examples
-#' f1()
+#' x <- "[1518-11-01 00:00] Guard #10 begins shift
+#' [1518-11-01 00:05] falls asleep
+#' [1518-11-01 00:25] wakes up
+#' [1518-11-01 00:30] falls asleep
+#' [1518-11-01 00:55] wakes up
+#' [1518-11-01 23:58] Guard #99 begins shift
+#' [1518-11-02 00:40] falls asleep
+#' [1518-11-02 00:50] wakes up
+#' [1518-11-03 00:05] Guard #10 begins shift
+#' [1518-11-03 00:24] falls asleep
+#' [1518-11-03 00:29] wakes up
+#' [1518-11-04 00:02] Guard #99 begins shift
+#' [1518-11-04 00:36] falls asleep
+#' [1518-11-04 00:46] wakes up
+#' [1518-11-05 00:03] Guard #99 begins shift
+#' [1518-11-05 00:45] falls asleep
+#' [1518-11-05 00:55] wakes up"
+#' x <- read_text_lines(x)
+#' find_sleepiest_minute_of_sleepiest_guard(x)
 #' f2()
-f1 <- function(x) {
+find_sleepiest_minute_of_sleepiest_guard <- function(x) {
+  df <- x %>%
+    parse_guard_log() %>%
+    fill_sleep_minutes()
 
+  sleepiest_guard <- df %>%
+    aggregate2(asleep ~ guard, sum) %>%
+    keep_rows(asleep == max(asleep)) %>%
+    getElement("guard")
+
+  df %>%
+    aggregate2(asleep ~ minute + guard, sum) %>%
+    keep_rows(guard == sleepiest_guard) %>%
+    keep_rows(asleep == max(asleep))
 }
 
 #' @rdname day04
 #' @export
-f2 <- function(x) {
+find_guard_with_sleepiest_minute <- function(x) {
+  df <- x %>%
+    parse_guard_log() %>%
+    fill_sleep_minutes()
 
+  df %>%
+    aggregate2(asleep ~ minute + guard, sum) %>%
+    keep_rows(asleep == max(asleep))
 }
 
-f_helper <- function(x) {
+parse_guard_log <- function(x) {
+  # Ugh this sucks without dplyr
 
-  x <- "[1518-11-01 00:00] Guard #10 begins shift
-  [1518-11-01 00:05] falls asleep
-  [1518-11-01 00:25] wakes up
-  [1518-11-01 00:30] falls asleep
-  [1518-11-01 00:55] wakes up
-  [1518-11-01 23:58] Guard #99 begins shift
-  [1518-11-02 00:40] falls asleep
-  [1518-11-02 00:50] wakes up
-  [1518-11-03 00:05] Guard #10 begins shift
-  [1518-11-03 00:24] falls asleep
-  [1518-11-03 00:29] wakes up
-  [1518-11-04 00:02] Guard #99 begins shift
-  [1518-11-04 00:36] falls asleep
-  [1518-11-04 00:46] wakes up
-  [1518-11-05 00:03] Guard #99 begins shift
-  [1518-11-05 00:45] falls asleep
-  [1518-11-05 00:55] wakes up"
-
-  d <- x %>% read_text_lines() %>% sample()
-
-
-  d %>%
-    sort()
-
+  # Extract parts of record into columns
   date <- "((\\d{4})-(\\d+)-(\\d+)) (\\d+):(\\d+)"
   text <- "(Guard #(\\d+) begins shift|(falls asleep|wakes up))"
-  d <- x
-  data <- d %>%
+  pattern <- stringr::str_glue("\\[{date}\\] {text}")
+
+  data <- x %>%
     sort() %>%
-    stringr::str_match(stringr::str_glue(p)) %>%
+    stringr::str_match(pattern) %>%
     as.data.frame(stringsAsFactors = FALSE) %>%
     tibble::as_tibble() %>%
     setNames(
@@ -154,6 +180,8 @@ f_helper <- function(x) {
         "hour", "minute", "text", "guard", "activity")) %>%
     utils::type.convert(as.is = TRUE)
 
+  # Sometimes the shift starts the day before the midnight shift (during the 11
+  # PM hour). In those cases, add 1 day to the record's date
   data$date <- as.Date(data$date, origin = "UTC")
   data$date[data$hour == 23] <- data$date[data$hour == 23] + 1
 
@@ -169,53 +197,42 @@ f_helper <- function(x) {
     format("%Y") %>%
     as.integer()
 
-  # Ugh this sucks without dplyr
-  sleeps <- data %>%
+  # Put the guard ID into a column and remove the start shift record.
+  data %>%
     split(.$date) %>%
-    purrr::map(function(x) {
+    purrr::map_dfr(function(x) {
       x$guard <- x$guard[1]
       x[-1, ]
-    }) %>%
-    purrr::map_dfr(function(x) {
-      # Assume awake every minute
-      df_sleep <- tibble::tibble(
-        minute = 0:59,
-        guard = x$guard[1],
-        date = x$date[1],
-        awake = TRUE)
-      # Find sleeping intervals
-      starts <- which(x$activity == "falls asleep")
-      ends <- which(x$activity == "wakes up")
-      snoozing <- x$minute[starts] %>%
-        purrr::map2(x$minute[ends] - 1, seq) %>%
-        purrr::flatten_int()
-      # Change those to sleeping
-      df_sleep[df_sleep$minute %in% snoozing, "awake"] <- FALSE
-      df_sleep$asleep <- !df_sleep$awake
-      df_sleep
     })
+}
 
+fill_sleep_minutes <- function(df) {
+  # Handle one day's records
+  fill_one <- function(x) {
+    # Assume awake every minute
+    df_sleep <- tibble::tibble(
+      minute = 0:59,
+      guard = x$guard[1],
+      date = x$date[1],
+      awake = TRUE)
 
-  total_sleep <- sleeps %>%
-    aggregate2(asleep ~ guard, sum)
-  sleepiest_guard <- total_sleep[which.max(total_sleep$asleep), "guard"]
+    # Find sleeping intervals
+    starts <- which(x$activity == "falls asleep")
+    ends <- which(x$activity == "wakes up")
 
+    snoozing <- x$minute[starts] %>%
+      purrr::map2(x$minute[ends] - 1, seq) %>%
+      purrr::flatten_int()
 
-  sleeps %>%
-    aggregate2(asleep ~ minute + guard, sum)
+    # Change those minutes to sleeping
+    df_sleep[df_sleep$minute %in% snoozing, "awake"] <- FALSE
+    df_sleep$asleep <- !df_sleep$awake
+    df_sleep[c("date", "guard", "minute", "awake", "asleep")]
+  }
 
-  df <- sleeps
-  keep_rows()
-  dots <- exprs(guard == 10, guard == 10)
-
-  sleeps %>%
-    keep_rows(FALSE)
-
-  guard_no = 10
-  sleeps %>%
-    keep_rows(guard == guard_no, minute == 0)
-
-  x <- ll[[1]]
+  df %>%
+    split(.$date) %>%
+    purrr::map_dfr(fill_one)
 }
 
 aggregate2 <-function(data, formula, ... ){
@@ -225,8 +242,7 @@ aggregate2 <-function(data, formula, ... ){
 keep_rows <- function(df, ...) {
   dots <- quos(...)
   for (dot in dots) {
-    df <- df[eval_tidy(dot, df), ]
+    df <- df[rlang::eval_tidy(dot, df), ]
   }
   df
 }
-
