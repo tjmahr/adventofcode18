@@ -4,7 +4,7 @@
 \name{aoc18_solutions}
 \alias{aoc18_solutions}
 \title{Advent of Code 2018 solutions}
-\format{An object of class \code{list} of length 18.}
+\format{An object of class \code{list} of length 50.}
 \usage{
 aoc18_solutions
 }
