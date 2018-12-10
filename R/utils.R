@@ -1,3 +1,6 @@
+#' @importFrom stats aggregate
+#' @importFrom utils head read.csv tail
+NULL
 
 #' @export
 read_text_lines <- function(x) {
