@@ -114,35 +114,38 @@ get_marble_high_score <- function(marble_history) {
 #' @rdname day09
 #' @export
 run_marbles <- function(players, marbles) {
-  start <- c(0)
-  current_position <- 1
-  history <- data.frame(
-    player = numeric(0),
-    turn = numeric(0),
-    score = numeric(0))
+  start <- c(0L)
+  current_position <- 1L
+  nrows <- marbles %/% 23L
 
-  for (i in 1:marbles) {
-    seed <- i
-    if (i %% 23 == 0) {
-      if (current_position == length(start)) stop()
-      to_remove <- wrap_around2(current_position - 7, start)
+  history <- data.frame(
+    player = integer(nrows),
+    turn = integer(nrows),
+    bonus = integer(nrows),
+    score = integer(nrows))
+
+  for (i in seq.int(1L, marbles)) {
+    if (i %% 10000L == 0L) message("step: ", i)
+    if (i %% 23L == 0L) {
+      to_remove <- wrap_around2(current_position - 7L, start)
       bonus <- start[to_remove]
       start <- start[-to_remove]
-      position <- wrap_around2(current_position - 7, start)
+      position <- wrap_around2(current_position - 7L, start)
 
-      row <- list(
-        player = ifelse(i %% players == 0, players, i %% players),
-        turn = i,
-        score = i + bonus)
-      history <- tibble::add_row(history, !!! row)
+      row <- i %/% 23L
+      history[row, "player"] <- ifelse(
+        i %% players == 0L,
+        players,
+        i %% players)
+      history[row, "turn"] <- i
+      history[row, "bonus"] <- bonus
+      history[row, "score"] <- i + bonus
+
     } else {
       position <- wrap_around2(current_position + 2, start)
-      start <- insert_value(start, position, seed)
+      start <- insert_value(start, position, i)
     }
     current_position <- position
-    # p_start <- as.character(start)
-    # p_start[current_position] <- paste0("(", p_start[current_position], ")")
-    # print(p_start)
   }
   history
 }
@@ -173,12 +176,12 @@ wrap_around2 <- function(xs, y) {
 }
 
 insert_value <- function(vector, position, value) {
-  start <- utils::head(vector, position - 1)
   if (position == 1) {
-    rest <- vector
+    c(value, vector)
   } else {
-    rest <- utils::tail(vector, -position + 1)
+    start <- vector[seq.int(1, position - 1)]
+    rest <- vector[seq.int(position, length(vector))]
+    c(start, value, rest)
   }
-  c(start, value, rest)
 }
 
