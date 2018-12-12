@@ -12,9 +12,11 @@ stopifnot(p1 == aoc18_solutions$day09a)
 
 
 p2_problem <- parse_marble_description(x)
-p2_problem$marbles <- p2_problem$marbles * 100
 
-p2_history <- run_marbles(p2_problem$players, p2_problem$marbles)
+p2_history_2 <- run_marbles(p2_problem$players, p2_problem$marbles * 2)
+# p2_history_3 <- run_marbles(p2_problem$players, p2_problem$marbles * 3)
+
+
 #
 # library(ggplot2)
 # ggplot(p1_history) + aes(x = turn, y = score, group = player) + geom_line()

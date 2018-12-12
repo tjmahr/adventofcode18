@@ -122,7 +122,8 @@ run_marbles <- function(players, marbles) {
     player = integer(nrows),
     turn = integer(nrows),
     bonus = integer(nrows),
-    score = integer(nrows))
+    score = integer(nrows),
+    high_score = integer(nrows))
 
   for (i in seq.int(1L, marbles)) {
     if (i %% 10000L == 0L) message("step: ", i)
@@ -140,7 +141,7 @@ run_marbles <- function(players, marbles) {
       history[row, "turn"] <- i
       history[row, "bonus"] <- bonus
       history[row, "score"] <- i + bonus
-
+      history[row, "high_score"] <- get_marble_high_score(history)
     } else {
       position <- wrap_around2(current_position + 2, start)
       start <- insert_value(start, position, i)
