@@ -4,6 +4,7 @@
 \alias{day09}
 \alias{get_marble_high_score}
 \alias{run_marbles}
+\alias{run_marbles_c}
 \alias{parse_marble_description}
 \alias{wrap_around2}
 \title{Day 09: Marble Mania}
@@ -11,6 +12,8 @@
 get_marble_high_score(marble_history)
 
 run_marbles(players, marbles)
+
+run_marbles_c(players, marbles)
 
 parse_marble_description(x)
 
@@ -36,10 +39,11 @@ For Parts One and Two, \code{parse_marble_description(x)} returns a list
 with an element \code{players} for the number of players and an element
 \code{marbles} with the number of marbles that need to be played.
 \code{run_marbles(players, marbles)} simulates the game and return a dataframe
-with one row per scoring turn. \code{get_marble_high_score(marble_history)}
-returns the score of the highest scoring player in a game. The helper
-function \code{wrap_around2(xs, y)} handles the details of wrapping positions
-\code{xs} around a circular vector \code{y}.
+with one row per scoring turn. \code{run_marbles_c(players, marbles)} is an
+alternative version written in C++ for speed.
+\code{get_marble_high_score(marble_history)} returns the score of the highest
+scoring player in a game. The helper function \code{wrap_around2(xs, y)} handles
+the details of wrapping positions \code{xs} around a circular vector \code{y}.
 }
 \description{
 \href{https://adventofcode.com/2018/day/9}{Marble Mania}

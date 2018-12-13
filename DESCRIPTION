@@ -28,6 +28,9 @@ Imports:
     stats,
     tibble,
     rlang (>= 0.1.2),
-    ggplot2
+    ggplot2,
+    Rcpp
 Suggests: 
     roxygen2
+LinkingTo: 
+    Rcpp

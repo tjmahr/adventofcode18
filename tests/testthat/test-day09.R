@@ -37,6 +37,42 @@ test_that("finding high score of marble game", {
 })
 
 
+test_that("finding high score of marble game (version 2)", {
+  run_marbles_c(7, 25) %>%
+  get_marble_high_score() %>%
+    expect_equal(32)
+
+  "10 players; last marble is worth 1618 points: high score is 8317" %>%
+    parse_marble_description() %>%
+    do.call(run_marbles_c, .) %>%
+    get_marble_high_score() %>%
+    expect_equal(8317)
+
+  "13 players; last marble is worth 7999 points: high score is 146373" %>%
+    parse_marble_description() %>%
+    do.call(run_marbles_c, .) %>%
+    get_marble_high_score() %>%
+    expect_equal(146373)
+
+  "17 players; last marble is worth 1104 points: high score is 2764" %>%
+    parse_marble_description() %>%
+    do.call(run_marbles_c, .) %>%
+    get_marble_high_score() %>%
+    expect_equal(2764)
+
+  "21 players; last marble is worth 6111 points: high score is 54718" %>%
+    parse_marble_description() %>%
+    do.call(run_marbles_c, .) %>%
+    get_marble_high_score() %>%
+    expect_equal(54718)
+
+  "30 players; last marble is worth 5807 points: high score is 37305" %>%
+    parse_marble_description() %>%
+    do.call(run_marbles_c, .) %>%
+    get_marble_high_score() %>%
+    expect_equal(37305)
+})
+
 test_that("wrapping indices around a circular vector", {
   wrap_around2(1:6, 1:6) %>%
     expect_equal(1:6)

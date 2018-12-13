@@ -113,10 +113,11 @@
 #'   with an element `players` for the number of players and an element
 #'   `marbles` with the number of marbles that need to be played.
 #'   `run_marbles(players, marbles)` simulates the game and return a dataframe
-#'   with one row per scoring turn. `get_marble_high_score(marble_history)`
-#'   returns the score of the highest scoring player in a game. The helper
-#'   function `wrap_around2(xs, y)` handles the details of wrapping positions
-#'   `xs` around a circular vector `y`.
+#'   with one row per scoring turn. `run_marbles_c(players, marbles)` is an
+#'   alternative version written in C++ for speed.
+#'   `get_marble_high_score(marble_history)` returns the score of the highest
+#'   scoring player in a game. The helper function `wrap_around2(xs, y)` handles
+#'   the details of wrapping positions `xs` around a circular vector `y`.
 #' @export
 #' @examples
 #' "10 players; last marble is worth 1618 points: high score is 8317" %>%
@@ -173,6 +174,34 @@ run_marbles <- function(players, marbles) {
     current_position <- position
   }
   history
+}
+
+#' @rdname day09
+#' @export
+run_marbles_c <- function(players, marbles) {
+  nrows <- marbles %/% 23L
+  turns <- seq_len(nrows) * 23
+
+  history <- data.frame(
+    player = ifelse(turns %% players == 0L, players, turns %% players),
+    turn = turns,
+    bonus = integer(nrows),
+    score = integer(nrows))
+
+
+  history$score <- run_marbles_c_scores(players, marbles)
+  history$bonus <- history$score - history$turn
+
+  history <- history %>%
+    split(.$player) %>%
+    purrr::map_dfr(
+      function(x) {
+        x$high_score = cumsum(x$score)
+        x}
+    )
+
+  history[order(history$turn), ]
+
 }
 
 #' @rdname day09
