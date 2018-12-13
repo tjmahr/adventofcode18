@@ -1,3 +1,6 @@
+# I solved this one using plotting because the main task is to read a string
+# spelled out with a bunch of dots in a grid.
+
 #' Day 10: The Stars Align
 #'
 #' [The Stars Align](https://adventofcode.com/2018/day/10)
@@ -173,49 +176,102 @@
 #'
 #' **Part Two**
 #'
-#' *(Use have to manually add this yourself.)*
+#' Good thing you didn\'t have to wait, because that would have taken a
+#' long time - much longer than the `3` seconds in the example above.
 #'
-#' *(Try using `convert_clipboard_html_to_roxygen_md()`)*
+#' Impressed by your sub-hour communication capabilities, the Elves are
+#' curious: *exactly how many seconds would they have needed to wait for
+#' that message to appear?*
 #'
-#' @param x some data
-#' @return For Part One, `f10a(x)` returns .... For Part Two,
-#'   `f10b(x)` returns ....
+#' @param x a character vector with the position and velocity data from the
+#'   puzzle input.
+#' @param df a dataframe of light positions and velocities created by
+#' @param n number of time steps to advance
+#' @return For Part One, `parse_light_points(x)` returns a dataframe with the
+#'   starting position and velocity for each light point in the puzzle input.
+#'   `step_light_points(df, n)` returns a dataframe with position of each light
+#'   point after `n` steps.
 #' @export
 #' @examples
-#' f10a()
-#' f10b()
+#' x <- "
+#'   position=< 9,  1> velocity=< 0,  2>
+#'   position=< 7,  0> velocity=<-1,  0>
+#'   position=< 3, -2> velocity=<-1,  1>
+#'   position=< 6, 10> velocity=<-2, -1>
+#'   position=< 2, -4> velocity=< 2,  2>
+#'   position=<-6, 10> velocity=< 2, -2>
+#'   position=< 1,  8> velocity=< 1, -1>
+#'   position=< 1,  7> velocity=< 1,  0>
+#'   position=<-3, 11> velocity=< 1, -2>
+#'   position=< 7,  6> velocity=<-1, -1>
+#'   position=<-2,  3> velocity=< 1,  0>
+#'   position=<-4,  3> velocity=< 2,  0>
+#'   position=<10, -3> velocity=<-1,  1>
+#'   position=< 5, 11> velocity=< 1, -2>
+#'   position=< 4,  7> velocity=< 0, -1>
+#'   position=< 8, -2> velocity=< 0,  1>
+#'   position=<15,  0> velocity=<-2,  0>
+#'   position=< 1,  6> velocity=< 1,  0>
+#'   position=< 8,  9> velocity=< 0, -1>
+#'   position=< 3,  3> velocity=<-1,  1>
+#'   position=< 0,  5> velocity=< 0, -1>
+#'   position=<-2,  2> velocity=< 2,  0.
+#'   position=< 5, -2> velocity=< 1,  2>
+#'   position=< 1,  4> velocity=< 2,  1>
+#'   position=<-2,  7> velocity=< 2, -2>
+#'   position=< 3,  6> velocity=<-1, -1>
+#'   position=< 5,  0> velocity=< 1,  0>
+#'   position=<-6,  0> velocity=< 2,  0>
+#'   position=< 5,  9> velocity=< 1, -2>
+#'   position=<14,  7> velocity=<-2,  0>
+#'   position=<-3,  6> velocity=< 2, -1>
+#'   "
+#'
+#' df <- x %>%
+#'   read_text_lines() %>%
+#'   parse_light_points()
+#'
+#' steps <- df %>%
+#'   step_light_points(5)
+#'
+#' library(ggplot2)
+#'
+#' ggplot(steps) +
+#'   aes(x = x, y = y) +
+#'   geom_point() +
+#'   facet_wrap("step")
 step_light_points <- function(df, n) {
+  # Basic idea: Run n steps by multiplying the velocities by n steps
+
+  # Step 0 has the original locations.
   df_old <- df
   df <- keep_rows(df, .data$step == 0)
 
+  # Create placeholder rows for the new steps
   df_new <- data.frame(
-    text = df$text %>% rep(n),
-    x = df$x %>% rep(n),
-    y = df$y %>% rep(n),
-    dx = df$dx %>% rep(n),
-    dy = df$dy %>% rep(n),
-    id = df$id %>% rep(n),
-    step = seq_len(n) %>% rep(each = nrow(df))
+    text = rep(df$text, n),
+    x = rep(df$x, n),
+    y = rep(df$y, n),
+    dx = rep(df$dx, n),
+    dy = rep(df$dy, n),
+    id = rep(df$id, n),
+    step = rep(seq_len(n), each = nrow(df))
   )
 
+  # Add max step to the new step counts so that this function
+  # can add more steps onto an existing dataframe
   df_new$step <- df_new$step + max(df_old$step)
   df_new$x <- df_new$x + df_new$step * df_new$dx
   df_new$y <- df_new$y + df_new$step * df_new$dy
   rbind(df_old, df_new)
 }
 
-step_light_points_once <- function(df) {
-  df_old <- df
-  df <- keep_rows(df, .data$step == max(.data$step))
-  df$x <- df$x + df$dx
-  df$y <- df$y + df$dy
-  df$step <- df$step + 1
-  rbind(df_old, df)
-}
-
 #' @rdname day10
 #' @export
 parse_light_points <- function(x) {
+  # \\s* is 0 or more spaces
+  # (-?\\d+) is an optional minus sign plus 1 or more digits
+  # . is my lazy way of matching < or >
   re1 <- "position=.\\s*(-?\\d+),\\s*(-?\\d+)."
   re2 <- "velocity=.\\s*(-?\\d+),\\s*(-?\\d+)."
   re <- paste0(re1, " ", re2)
@@ -229,17 +285,4 @@ parse_light_points <- function(x) {
   df$id <- seq_len(nrow(df))
   df$step <- 0
   df
-}
-
-
-
-
-#' @rdname day10
-#' @export
-f10b <- function(x) {
-
-}
-
-f10_helper <- function(x) {
-
 }

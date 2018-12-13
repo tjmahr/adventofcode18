@@ -4,21 +4,25 @@
 \alias{day10}
 \alias{step_light_points}
 \alias{parse_light_points}
-\alias{f10b}
 \title{Day 10: The Stars Align}
 \usage{
 step_light_points(df, n)
 
 parse_light_points(x)
-
-f10b(x)
 }
 \arguments{
-\item{x}{some data}
+\item{df}{a dataframe of light positions and velocities created by}
+
+\item{n}{number of time steps to advance}
+
+\item{x}{a character vector with the position and velocity data from the
+puzzle input.}
 }
 \value{
-For Part One, \code{f10a(x)} returns .... For Part Two,
-\code{f10b(x)} returns ....
+For Part One, \code{parse_light_points(x)} returns a dataframe with the
+starting position and velocity for each light point in the puzzle input.
+\code{step_light_points(df, n)} returns a dataframe with position of each light
+point after \code{n} steps.
 }
 \description{
 \href{https://adventofcode.com/2018/day/10}{The Stars Align}
@@ -189,11 +193,59 @@ message will be much longer and will take many more seconds to appear.
 
 \strong{Part Two}
 
-\emph{(Use have to manually add this yourself.)}
+Good thing you didn't have to wait, because that would have taken a
+long time - much longer than the \code{3} seconds in the example above.
 
-\emph{(Try using \code{convert_clipboard_html_to_roxygen_md()})}
+Impressed by your sub-hour communication capabilities, the Elves are
+curious: \emph{exactly how many seconds would they have needed to wait for
+that message to appear?}
 }
 \examples{
-f10a()
-f10b()
+x <- "
+  position=< 9,  1> velocity=< 0,  2>
+  position=< 7,  0> velocity=<-1,  0>
+  position=< 3, -2> velocity=<-1,  1>
+  position=< 6, 10> velocity=<-2, -1>
+  position=< 2, -4> velocity=< 2,  2>
+  position=<-6, 10> velocity=< 2, -2>
+  position=< 1,  8> velocity=< 1, -1>
+  position=< 1,  7> velocity=< 1,  0>
+  position=<-3, 11> velocity=< 1, -2>
+  position=< 7,  6> velocity=<-1, -1>
+  position=<-2,  3> velocity=< 1,  0>
+  position=<-4,  3> velocity=< 2,  0>
+  position=<10, -3> velocity=<-1,  1>
+  position=< 5, 11> velocity=< 1, -2>
+  position=< 4,  7> velocity=< 0, -1>
+  position=< 8, -2> velocity=< 0,  1>
+  position=<15,  0> velocity=<-2,  0>
+  position=< 1,  6> velocity=< 1,  0>
+  position=< 8,  9> velocity=< 0, -1>
+  position=< 3,  3> velocity=<-1,  1>
+  position=< 0,  5> velocity=< 0, -1>
+  position=<-2,  2> velocity=< 2,  0.
+  position=< 5, -2> velocity=< 1,  2>
+  position=< 1,  4> velocity=< 2,  1>
+  position=<-2,  7> velocity=< 2, -2>
+  position=< 3,  6> velocity=<-1, -1>
+  position=< 5,  0> velocity=< 1,  0>
+  position=<-6,  0> velocity=< 2,  0>
+  position=< 5,  9> velocity=< 1, -2>
+  position=<14,  7> velocity=<-2,  0>
+  position=<-3,  6> velocity=< 2, -1>
+  "
+
+df <- x \%>\%
+  read_text_lines() \%>\%
+  parse_light_points()
+
+steps <- df \%>\%
+  step_light_points(5)
+
+library(ggplot2)
+
+ggplot(steps) +
+  aes(x = x, y = y) +
+  geom_point() +
+  facet_wrap("step")
 }
