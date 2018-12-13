@@ -19,10 +19,10 @@ parse_light_points(x)
 puzzle input.}
 }
 \value{
-For Part One, \code{parse_light_points(x)} returns a dataframe with the
-starting position and velocity for each light point in the puzzle input.
-\code{step_light_points(df, n)} returns a dataframe with position of each light
-point after \code{n} steps.
+For Parts One and Two, \code{parse_light_points(x)} returns a dataframe
+with the starting position and velocity for each light point in the puzzle
+input. \code{step_light_points(df, n)} returns a dataframe with position of each
+light point after \code{n} steps.
 }
 \description{
 \href{https://adventofcode.com/2018/day/10}{The Stars Align}

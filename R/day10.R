@@ -187,10 +187,10 @@
 #'   puzzle input.
 #' @param df a dataframe of light positions and velocities created by
 #' @param n number of time steps to advance
-#' @return For Part One, `parse_light_points(x)` returns a dataframe with the
-#'   starting position and velocity for each light point in the puzzle input.
-#'   `step_light_points(df, n)` returns a dataframe with position of each light
-#'   point after `n` steps.
+#' @return For Parts One and Two, `parse_light_points(x)` returns a dataframe
+#'   with the starting position and velocity for each light point in the puzzle
+#'   input. `step_light_points(df, n)` returns a dataframe with position of each
+#'   light point after `n` steps.
 #' @export
 #' @examples
 #' x <- "

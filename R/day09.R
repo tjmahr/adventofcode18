@@ -1,3 +1,7 @@
+# book-keeping of indices
+# then i improved performance by pre-allocating vector space
+# and removing helper functions like head() or tail() to eke out more speed
+
 #' Day 09: Marble Mania
 #'
 #' [Marble Mania](https://adventofcode.com/2018/day/9)
@@ -93,17 +97,37 @@
 #'
 #' **Part Two**
 #'
-#' *(Use have to manually add this yourself.)*
+#' Amused by the speed of your answer, the Elves are curious:
 #'
-#' *(Try using `convert_clipboard_html_to_roxygen_md()`)*
+#' *What would the new winning Elf\'s score be if the number of the last
+#' marble were 100 times larger?*
 #'
-#' @param x some data
-#' @return For Part One, `f09a(x)` returns .... For Part Two,
-#'   `f09b(x)` returns ....
+#' @param x sentence like the puzzle input descriping the number of players and
+#'   value of the last marble
+#' @param players,marbles the numbers of players and marbles, as returned by
+#'   `parse_marble_description(x)`
+#' @param marble_history a dataframe as returned by
+#'   `run_marbles(players, marbles)` with the history of scoring turns in the
+#'   marble game.
+#' @return For Parts One and Two, `parse_marble_description(x)` returns a list
+#'   with an element `players` for the number of players and an element
+#'   `marbles` with the number of marbles that need to be played.
+#'   `run_marbles(players, marbles)` simulates the game and return a dataframe
+#'   with one row per scoring turn. `get_marble_high_score(marble_history)`
+#'   returns the score of the highest scoring player in a game. The helper
+#'   function `wrap_around2(xs, y)` handles the details of wrapping positions
+#'   `xs` around a circular vector `y`.
 #' @export
 #' @examples
-#' f09a()
-#' f09b()
+#' "10 players; last marble is worth 1618 points: high score is 8317" %>%
+#'   parse_marble_description() %>%
+#'   do.call(run_marbles, .) %>%
+#'   get_marble_high_score()
+#'
+#' # 0 is position 1
+#' # 7 is first position (wrapped around 1 time)
+#' # -1 is the last element (wrapped around backwards)
+#' setNames(wrap_around2(-10:10, 1:6), -10:10)
 get_marble_high_score <- function(marble_history) {
   marble_history %>%
     aggregate2(score ~ player, sum) %>%
@@ -167,11 +191,11 @@ parse_marble_description <- function(x) {
 
 #' @rdname day09
 #' @export
-f09b <- function(x) {
-
-}
-
+#' @param xs positions in a circular vector
+#' @param y a circular vector
 wrap_around2 <- function(xs, y) {
+  # treat position 0 as position 1
+  # negative ones should count from end
   xs <- ifelse(xs <= 0, xs + 1, xs)
   ((xs - 1) %% length(y)) + 1
 }

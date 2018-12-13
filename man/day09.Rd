@@ -5,7 +5,7 @@
 \alias{get_marble_high_score}
 \alias{run_marbles}
 \alias{parse_marble_description}
-\alias{f09b}
+\alias{wrap_around2}
 \title{Day 09: Marble Mania}
 \usage{
 get_marble_high_score(marble_history)
@@ -14,14 +14,32 @@ run_marbles(players, marbles)
 
 parse_marble_description(x)
 
-f09b(x)
+wrap_around2(xs, y)
 }
 \arguments{
-\item{x}{some data}
+\item{marble_history}{a dataframe as returned by
+\code{run_marbles(players, marbles)} with the history of scoring turns in the
+marble game.}
+
+\item{players, marbles}{the numbers of players and marbles, as returned by
+\code{parse_marble_description(x)}}
+
+\item{x}{sentence like the puzzle input descriping the number of players and
+value of the last marble}
+
+\item{xs}{positions in a circular vector}
+
+\item{y}{a circular vector}
 }
 \value{
-For Part One, \code{f09a(x)} returns .... For Part Two,
-\code{f09b(x)} returns ....
+For Parts One and Two, \code{parse_marble_description(x)} returns a list
+with an element \code{players} for the number of players and an element
+\code{marbles} with the number of marbles that need to be played.
+\code{run_marbles(players, marbles)} simulates the game and return a dataframe
+with one row per scoring turn. \code{get_marble_high_score(marble_history)}
+returns the score of the highest scoring player in a game. The helper
+function \code{wrap_around2(xs, y)} handles the details of wrapping positions
+\code{xs} around a circular vector \code{y}.
 }
 \description{
 \href{https://adventofcode.com/2018/day/9}{Marble Mania}
@@ -114,11 +132,19 @@ Here are a few more examples:
 
 \strong{Part Two}
 
-\emph{(Use have to manually add this yourself.)}
+Amused by the speed of your answer, the Elves are curious:
 
-\emph{(Try using \code{convert_clipboard_html_to_roxygen_md()})}
+\emph{What would the new winning Elf's score be if the number of the last
+marble were 100 times larger?}
 }
 \examples{
-f09a()
-f09b()
+"10 players; last marble is worth 1618 points: high score is 8317" \%>\%
+  parse_marble_description() \%>\%
+  do.call(run_marbles, .) \%>\%
+  get_marble_high_score()
+
+# 0 is position 1
+# 7 is first position (wrapped around 1 time)
+# -1 is the last element (wrapped around backwards)
+setNames(wrap_around2(-10:10, 1:6), -10:10)
 }
