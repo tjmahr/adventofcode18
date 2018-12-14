@@ -1,6 +1,8 @@
 # book-keeping of indices
 # then i improved performance by pre-allocating vector space
 # and removing helper functions like head() or tail() to eke out more speed
+# then I rewrote the main function in Rcpp to get even more speed. It still took
+# 10 hours.
 
 #' Day 09: Marble Mania
 #'

@@ -99,18 +99,38 @@
 #' @examples
 #' f11a()
 #' f11b()
-f11a <- function(x) {
+pool_power_cells <- function(mat, pool_span, fun = sum) {
+  # The pools should not extend outside of the original grid.
+  # If the pool is 10 units wide and the matrix is 25 cells wide, then the
+  # bottom right cornder of the sums should be 16,16.
+  new_span <- ncol(mat) - pool_span + 1
+  cols <- rep(1:new_span, new_span)
+  rows <- rep(1:new_span, each = new_span)
 
+  # Pools are located at the x,y coordinate plus some offsets.
+  # The 3x3 pool at 2,2 has xs at 2 + c(0, 1, 2)
+  offsets <- seq(0, by = 1, length.out = pool_span)
+
+  f <- function(col, row) {
+    fun(mat[row + offsets, col + offsets])
+  }
+
+  results <- purrr::map2(cols, rows, f) %>%
+    purrr::flatten_dbl() %>%
+    matrix(
+      ncol = new_span,
+      nrow = new_span,
+      byrow = TRUE)
+
+  item <- which.max(results)
+  list(
+    # Yeah, I know this is confusing. I think which.max() is column-major?
+    x = rows[item],
+    y = cols[item],
+    power = results[item],
+    span = pool_span
+  )
 }
-
-#' -   Find the fuel cell's *rack ID*, which is its *X coordinate plus 10*.
-#' -   Begin with a power level of the *rack ID* times the *Y coordinate*.
-#' -   Increase the power level by the value of the *grid serial number*
-#'     (your puzzle input).
-#' -   Set the power level to itself multiplied by the *rack ID*.
-#' -   Keep only the *hundreds digit* of the power level (so `12345`
-#'     becomes `3`; numbers with no hundreds digit become `0`).
-#' -   *Subtract 5* from the power level.
 
 
 
@@ -129,11 +149,10 @@ compute_cell_power_level <- function(x, y, serial_number) {
 #' @rdname day11
 #' @export
 create_power_cell_matrix <- function(span, serial_number) {
-  xs <- rep(1:span, span)
-  ys <- rep(1:span, each = span)
-  m2 <- compute_cell_power_level(xs, ys, serial_number) %>%
+  coords <- enumerate_x_y_coords(span, span)
+  m2 <- compute_cell_power_level(coords$x, coords$y, serial_number) %>%
     matrix(ncol = span, byrow = TRUE)
-  m <- matrix(nrow = span, ncol = span)
+  # m <- matrix(nrow = span, ncol = span)
   # for (x in seq_len(span)) {
   #   for (y in seq_len(span)) {
   #     m[y, x] <- compute_cell_power_level(x, y, serial_number)
@@ -142,13 +161,18 @@ create_power_cell_matrix <- function(span, serial_number) {
   m2
 }
 
+enumerate_x_y_coords <- function(span_x, span_y) {
+  list(
+    x = rep(1:span_x, span_x),
+    y = rep(1:span_y, each = span_y)
+  )
+}
 
 #' @rdname day11
 #' @export
-f11b <- function(x) {
-
-}
-
-f11_helper <- function(x) {
-
+search_power_cell_pools <- function(mat, to_search = NULL) {
+  if (is.null(to_search)) {
+    to_search <- seq_len(nrow(mat))
+  }
+  purrr::map_dfr(to_search, pool_power_cells, mat = mat)
 }

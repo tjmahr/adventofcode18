@@ -3,54 +3,19 @@ x <- readLines("./inst/input09.txt")
 
 p1_history <- x %>%
   parse_marble_description() %>%
-  do.call(run_marbles, .)
+  do.call(run_marbles_c, .)
 
 p1 <- p1_history %>%
   get_marble_high_score()
 
 stopifnot(p1 == aoc18_solutions$day09a)
 
+# Don't run. It took 10 hours.
 
-p2_problem <- parse_marble_description(x)
-
-p2_history_2 <- run_marbles(p2_problem$players, p2_problem$marbles * 2)
-# p2_history_3 <- run_marbles(p2_problem$players, p2_problem$marbles * 3)
-
-
+# p2_problem <- parse_marble_description(x)
+# p2_history_2 <- run_marbles_c(p2_problem$players, p2_problem$marbles * 100)
 #
-# library(ggplot2)
-# ggplot(p1_history) + aes(x = turn, y = score, group = player) + geom_line()
-#
-# ggplot(p1_history) +
-#   aes(x = turn, y = score) +
-#   geom_line() +
-#   stat_summary(aes(group = player), fun.y = sum, geom = "line")
-#
-# for(turn)
-#
-# a1 <- p1_history %>%
-#   keep_rows(turn < 20000) %>%
+# p2_history_2 %>%
 #   get_marble_high_score()
 #
-# a2 <- p1_history %>%
-#   keep_rows(turn < 21000) %>%
-#   get_marble_high_score()
-#
-# a3 <- p1_history %>%
-#   keep_rows(turn < 22000) %>%
-#   get_marble_high_score()
-#
-# a4 <- p1_history %>%
-#   keep_rows(turn < 23000) %>%
-#   get_marble_high_score()
-#
-# c(a1, a2, a3, a4) %>% diff
-#
-# a2 <- p1_history[1:21000, ] %>%
-#   get_marble_high_score()
-# a3 <- p1_history[1:22000, ] %>%
-#   get_marble_high_score()
-# a1 <- p1_history[1:20000, ] %>%
-#   get_marble_high_score()
-
-stopifnot(p2 == aoc18_solutions$day09b)
+# stopifnot(p2 == aoc18_solutions$day09b)
