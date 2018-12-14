@@ -129,17 +129,17 @@ compute_cell_power_level <- function(x, y, serial_number) {
 #' @rdname day11
 #' @export
 create_power_cell_matrix <- function(span, serial_number) {
-  # xs <- rep(1:span, each = span)
-  # ys <- rep(1:span, span)
-  # compute_cell_power_level(xs, ys, serial_number) %>%
-  #   matrix(ncol = span, byrow = TRUE)
+  xs <- rep(1:span, span)
+  ys <- rep(1:span, each = span)
+  m2 <- compute_cell_power_level(xs, ys, serial_number) %>%
+    matrix(ncol = span, byrow = TRUE)
   m <- matrix(nrow = span, ncol = span)
-  for (x in seq_len(span)) {
-    for (y in seq_len(span)) {
-      m[y, x] <- compute_cell_power_level(x, y, serial_number)
-    }
-  }
-  m
+  # for (x in seq_len(span)) {
+  #   for (y in seq_len(span)) {
+  #     m[y, x] <- compute_cell_power_level(x, y, serial_number)
+  #   }
+  # }
+  m2
 }
 
 
